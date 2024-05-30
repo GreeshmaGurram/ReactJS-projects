@@ -1,0 +1,108 @@
+import CashWithdrawal from './components/CashWithdrawal'
+
+import './App.css'
+
+const denominationsList = [
+  {
+    id: 1,
+    value: 50,
+  },
+  {
+    id: 2,
+    value: 100,
+  },
+  {
+    id: 3,
+    value: 200,
+  },
+  {
+    id: 4,
+    value: 500,
+  },
+]
+
+const App = () => <CashWithdrawal denominationsList={denominationsList} />
+
+export default App
+
+
+// Write your code here
+import {Component} from 'react'
+import DenominationItem from '../DenominationItem/index'
+
+import './index.css'
+
+class CashWithdrawal extends Component {
+  state = {
+    totalAmount: 2000,
+  }
+
+  onCashWithDrawal = amountInRuppes => {
+    this.setState(prevState => ({
+      totalAmount: prevState.totalAmount - amountInRuppes,
+    }))
+  }
+
+  render() {
+    const {denominationsList} = this.props
+    const {totalAmount} = this.state
+
+    return (
+      <div className="main-container">
+        <div className="cashWithdrawal-container">
+          <div className="name-container">
+            <p className="name-icon-container">S</p>
+            <p className="fullName-conatiner">Sarah Williams</p>
+          </div>
+          <div className="yourBalance-container">
+            <p className="yourBalance-text-container">Your Balance</p>
+            <p className="yourBalance">{totalAmount}</p>
+          </div>
+          <div className="inRupees-container">
+            <p className="inRupees-text">In Rupees</p>
+          </div>
+          <div>
+            <p className="fullName-conatiner fw-1">Withdraw</p>
+            <p className="yourBalance-text-container">CHOOSE SUM (IN RUPEES)</p>
+            <ul className="denominationItemList-container">
+              {denominationsList.map(denomination => (
+                <DenominationItem
+                  denomination={denomination}
+                  key={denomination.id}
+                  onCashWithDrawal={this.onCashWithDrawal}
+                />
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+    )
+  }
+}
+
+export default CashWithdrawal
+
+
+// Write your code here
+import {Component} from 'react'
+import './index.css'
+
+class DenominationItem extends Component {
+  onSumInRupeesChosen = () => {
+    const {onCashWithDrawal, denomination} = this.props
+    onCashWithDrawal(denomination.value)
+  }
+
+  render() {
+    const {denomination} = this.props
+    return (
+      <li className="denominationItem-container">
+        <button onClick={this.onSumInRupeesChosen} type="button">
+          {denomination.value}
+        </button>
+      </li>
+    )
+  }
+}
+
+export default DenominationItem
