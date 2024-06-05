@@ -1,0 +1,100 @@
+import Feedback from './components/Feedback'
+
+import './App.css'
+
+const resources = {
+  emojis: [
+    {
+      id: 0,
+      name: 'Sad',
+      imageUrl: 'https://assets.ccbp.in/frontend/react-js/sad-emoji-img.png',
+    },
+    {
+      id: 1,
+      name: 'None',
+      imageUrl: 'https://assets.ccbp.in/frontend/react-js/none-emoji-img.png',
+    },
+    {
+      id: 2,
+      name: 'Happy',
+      imageUrl: 'https://assets.ccbp.in/frontend/react-js/happy-emoji-img.png',
+    },
+  ],
+  loveEmojiUrl: 'https://assets.ccbp.in/frontend/react-js/love-emoji-img.png',
+}
+
+const App = () => <Feedback resources={resources} />
+
+export default App
+
+
+
+import {Component} from 'react'
+import './index.css'
+
+class Feedback extends Component {
+  state = {
+    isFeedbackPage: false,
+  }
+
+  submitFeedback = () => {
+    this.setState(prevState => ({isFeedbackPage: !prevState.isFeedbackPage}))
+  }
+
+  render() {
+    const {resources} = this.props
+    const {isFeedbackPage} = this.state
+    return (
+      <div className="background-container">
+        {!isFeedbackPage && (
+          <div className="main-container">
+            <h1 className="main-heading">
+              How satisfied are you with our customer support performance?
+            </h1>
+            <ul className="emojis-container">
+              <li key={resources.emojis[0].id}>
+                <img
+                  src={resources.emojis[0].imageUrl}
+                  alt={resources.emojis[0].name}
+                  className="emoji"
+                  onClick={this.submitFeedback}
+                />
+                <p className="para">{resources.emojis[0].name}</p>
+              </li>
+              <li key={resources.emojis[1].id}>
+                <img
+                  src={resources.emojis[1].imageUrl}
+                  alt={resources.emojis[1].name}
+                  className="emoji"
+                  onClick={this.submitFeedback}
+                />
+                <p className="para">{resources.emojis[1].name}</p>
+              </li>
+              <li key={resources.emojis[2].id}>
+                <img
+                  src={resources.emojis[2].imageUrl}
+                  alt={resources.emojis[2].name}
+                  className="emoji"
+                  onClick={this.submitFeedback}
+                />
+                <p className="para">{resources.emojis[2].name}</p>
+              </li>
+            </ul>
+          </div>
+        )}
+        {isFeedbackPage && (
+          <div className="main-container">
+            <img src={resources.loveEmojiUrl} alt="love emoji" />
+            <h1 className="main-heading">Thank You!</h1>
+            <p>
+              We will use your feedback to improve our customer support
+              performance.
+            </p>
+          </div>
+        )}
+      </div>
+    )
+  }
+}
+
+export default Feedback
