@@ -1,0 +1,203 @@
+import Comments from './components/Comments'
+
+import './App.css'
+
+const App = () => <Comments />
+
+export default App
+
+
+import {Component} from 'react'
+import {formatDistanceToNow} from 'date-fns'
+import {v4 as uuidv4} from 'uuid'
+import CommentItem from '../CommentItem/index'
+import './index.css'
+
+const initialContainerBackgroundClassNames = [
+  'amber',
+  'blue',
+  'orange',
+  'emerald',
+  'teal',
+  'red',
+  'light-blue',
+]
+
+class Comments extends Component {
+  state = {
+    commentsList: [],
+    nameInput: '',
+    commentText: '',
+  }
+
+  onAddComment = e => {
+    e.preventDefault()
+    const {nameInput, commentText} = this.state
+    const newComment = {
+      id: uuidv4(),
+      name: nameInput,
+      comment: commentText,
+      dateAndTime: formatDistanceToNow(new Date()),
+      isLiked: false,
+    }
+    this.setState(prevState => ({
+      commentsList: [...prevState.commentsList, newComment],
+      nameInput: '',
+      commentText: '',
+      commentsCount: prevState.commentsCount + 1,
+    }))
+  }
+
+  onNameChanged = e => {
+    if (e.target.value.trim() !== '') {
+      this.setState({nameInput: e.target.value})
+    }
+  }
+
+  onCommentChanged = e => {
+    if (e.target.value.trim() !== '') {
+      this.setState({commentText: e.target.value})
+    }
+  }
+
+  onDeleteComment = id => {
+    this.setState(prevState => ({
+      commentsList: prevState.commentsList.filter(
+        eachComment => eachComment.id !== id,
+      ),
+    }))
+  }
+
+  onLikePreferenceChanged = id => {
+    this.setState(prevState => ({
+      commentsList: prevState.commentsList.map(eachComment => {
+        if (id === eachComment.id) {
+          return {...eachComment, isLiked: !eachComment.isLiked}
+        }
+        return eachComment
+      }),
+    }))
+  }
+
+  render() {
+    const {commentsList, nameInput, commentText} = this.state
+    return (
+      <div className="background-container">
+        <div className="upper-comments-container">
+          <div>
+            <h1 className="title">Comments</h1>
+            <p className="para">Say something about 4.0 Technologies</p>
+            <form className="form-container" onSubmit={this.onAddComment}>
+              <input
+                type="text"
+                value={nameInput}
+                placeholder="Your Name"
+                className="name-input-container"
+                onChange={this.onNameChanged}
+              />
+              <textarea
+                placeholder="Your Comment"
+                name="comment"
+                value={commentText}
+                rows="6"
+                cols="50"
+                onChange={this.onCommentChanged}
+                className="comment-textarea-container"
+              />
+              <button type="submit" className="add-comment-btn">
+                Add Comment
+              </button>
+            </form>
+          </div>
+          <div>
+            <img
+              src="https://assets.ccbp.in/frontend/react-js/comments-app/comments-img.png"
+              alt="comments"
+            />
+          </div>
+        </div>
+        <hr />
+        <div>
+          <p className="comments">
+            <span className="count-span">{commentsList.length}</span> Comments
+          </p>
+          <ul>
+            {commentsList.map(eachComment => (
+              <CommentItem
+                key={eachComment.id}
+                comment={eachComment}
+                onLikePreferenceChanged={this.onLikePreferenceChanged}
+                onDeleteComment={this.onDeleteComment}
+                background-classNames={initialContainerBackgroundClassNames}
+              />
+            ))}
+          </ul>
+        </div>
+      </div>
+    )
+  }
+}
+
+export default Comments
+
+
+// Write your code here
+import {Component} from 'react'
+import './index.css'
+
+class CommentItem extends Component {
+  onDeleteClicked = () => {
+    const {comment, onDeleteComment} = this.props
+    onDeleteComment(comment.id)
+  }
+
+  onLikeClicked = () => {
+    const {comment, onLikePreferenceChanged} = this.props
+    onLikePreferenceChanged(comment.id)
+  }
+
+  render() {
+    const {comment} = this.props
+    const likedClassName = comment.isLiked ? 'active-like' : ''
+    const likeImgUrl = comment.isLiked
+      ? 'https://assets.ccbp.in/frontend/react-js/comments-app/liked-img.png'
+      : 'https://assets.ccbp.in/frontend/react-js/comments-app/like-img.png'
+    return (
+      <li className="list-comment">
+        <div className="name-display">
+          <p className="initial-container">{comment.name.slice(0, 1)}</p>
+          <p className="name">{comment.name}</p>
+          <p className="date">{comment.dateAndTime}</p>
+        </div>
+        <div>
+          <p className="comments-text-container">{comment.comment}</p>
+        </div>
+        <div className="actions-container">
+          <button
+            type="button"
+            className={`name-display delete-btn ${likedClassName}`}
+            onClick={this.onLikeClicked}
+          >
+            <img src={likeImgUrl} alt="Like" className="like-icon" />
+            <p className={`like-text ${likedClassName}`}>Like</p>
+          </button>
+          <button
+            type="button"
+            data-testid="delete"
+            className="delete-btn"
+            onClick={this.onDeleteClicked}
+          >
+            <img
+              src="https://assets.ccbp.in/frontend/react-js/comments-app/delete-img.png"
+              alt="delete"
+              className="like-icon"
+            />
+          </button>
+        </div>
+        <hr />
+      </li>
+    )
+  }
+}
+
+export default CommentItem
