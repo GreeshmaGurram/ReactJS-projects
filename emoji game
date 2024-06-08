@@ -1,0 +1,254 @@
+import EmojiGame from './components/EmojiGame'
+
+import './App.css'
+
+const emojisList = [
+  {
+    id: 0,
+    emojiName: 'Face with stuck out tongue',
+    emojiUrl:
+      'https://assets.ccbp.in/frontend/react-js/face-with-stuck-out-tongue-img.png',
+  },
+  {
+    id: 1,
+    emojiName: 'Face with head bandage',
+    emojiUrl:
+      'https://assets.ccbp.in/frontend/react-js/face-with-head-bandage-img.png',
+  },
+  {
+    id: 2,
+    emojiName: 'Face with hugs',
+    emojiUrl: 'https://assets.ccbp.in/frontend/react-js/face-with-hugs-img.png',
+  },
+  {
+    id: 3,
+    emojiName: 'Face with laughing',
+    emojiUrl:
+      'https://assets.ccbp.in/frontend/react-js/face-with-laughing-img.png',
+  },
+  {
+    id: 4,
+    emojiName: 'Laughing face with hand in front of mouth',
+    emojiUrl:
+      'https://assets.ccbp.in/frontend/react-js/face-with-laughing-with-hand-infront-mouth-img.png',
+  },
+  {
+    id: 5,
+    emojiName: 'Face with mask',
+    emojiUrl: 'https://assets.ccbp.in/frontend/react-js/face-with-mask-img.png',
+  },
+  {
+    id: 6,
+    emojiName: 'Face with silence',
+    emojiUrl:
+      'https://assets.ccbp.in/frontend/react-js/face-with-silence-img.png',
+  },
+  {
+    id: 7,
+    emojiName: 'Face with stuck out tongue and winked eye',
+    emojiUrl:
+      'https://assets.ccbp.in/frontend/react-js/face-with-stuck-out-tongue-and-winking-eye-img.png',
+  },
+  {
+    id: 8,
+    emojiName: 'Grinning face with sweat',
+    emojiUrl:
+      'https://assets.ccbp.in/frontend/react-js/grinning-face-with-sweat-img.png',
+  },
+  {
+    id: 9,
+    emojiName: 'Smiling face with heart eyes',
+    emojiUrl:
+      'https://assets.ccbp.in/frontend/react-js/smiling-face-with-heart-eyes-img.png',
+  },
+  {
+    id: 10,
+    emojiName: 'Grinning face',
+    emojiUrl: 'https://assets.ccbp.in/frontend/react-js/grinning-face-img.png',
+  },
+  {
+    id: 11,
+    emojiName: 'Smiling face with star eyes',
+    emojiUrl:
+      'https://assets.ccbp.in/frontend/react-js/smiling-face-with-star-eyes-img.png',
+  },
+]
+
+const App = () => <EmojiGame emojisList={emojisList} />
+
+export default App
+
+
+import {Component} from 'react'
+import Navbar from '../NavBar/index'
+import EmojiCard from '../EmojiCard/index'
+import WinOrLoseCard from '../WinOrLoseCard/index'
+import './index.css'
+
+class EmojiGame extends Component {
+  state = {
+    score: 0,
+    topScore: 0,
+    clickedEmojisList: [],
+    isGameWon: '',
+  }
+
+  shuffledEmojisList = () => {
+    const {emojisList} = this.props
+    return emojisList.sort(() => Math.random() - 0.5)
+  }
+
+  onEmojiClicked = id => {
+    this.shuffledEmojisList()
+    const {emojisList} = this.props
+    const {clickedEmojisList} = this.state
+
+    const updatedClickedEmojisList =
+      clickedEmojisList.filter(emoji => emoji.id === id).length === 0
+        ? [...clickedEmojisList, emojisList[id]]
+        : clickedEmojisList
+    if (clickedEmojisList.length === 0) {
+      this.setState({clickedEmojisList: updatedClickedEmojisList})
+      return
+    }
+
+    if (updatedClickedEmojisList.length === clickedEmojisList.length) {
+      this.setState(prevState => ({
+        isGameWon: false,
+        topScore:
+          prevState.topScore < prevState.clickedEmojisList.length
+            ? prevState.clickedEmojisList.length
+            : prevState.topScore,
+      }))
+    } else if (updatedClickedEmojisList.length === emojisList.length) {
+      this.setState({
+        isGameWon: true,
+        topScore: emojisList.length,
+      })
+    } else {
+      this.setState(prevState => ({
+        isGameWon: '',
+        clickedEmojisList: updatedClickedEmojisList,
+        score: prevState.score + 1,
+      }))
+    }
+  }
+
+  onResetGame = () => {
+    this.setState({
+      score: 0,
+      clickedEmojisList: [],
+      isGameWon: '',
+    })
+  }
+
+  render() {
+    const {score, topScore, isGameWon} = this.state
+    const {emojisList} = this.props
+    return (
+      <div className="background-container">
+        <Navbar score={score} topScore={topScore} isGameWon={isGameWon} />
+        {isGameWon === '' && (
+          <div>
+            <ul className="list-items-container">
+              {emojisList.map(emoji => (
+                <EmojiCard
+                  emoji={emoji}
+                  key={emoji.id}
+                  onEmojiClicked={this.onEmojiClicked}
+                />
+              ))}
+            </ul>
+          </div>
+        )}
+        {(isGameWon === true || isGameWon === false) && (
+          <div>
+            <WinOrLoseCard
+              isGameWon={isGameWon}
+              onResetGame={this.onResetGame}
+            />
+          </div>
+        )}
+      </div>
+    )
+  }
+}
+
+export default EmojiGame
+
+
+// Write your code here.
+import './index.css'
+
+const Navbar = props => {
+  const {score, topScore, isGameWon} = props
+  return (
+    <div className="main-container">
+      <div className="logo-container">
+        <img
+          alt="emoji logo"
+          src="https://assets.ccbp.in/frontend/react-js/game-logo-img.png"
+        />
+        <h3>Emoji Game</h3>
+      </div>
+      {isGameWon === '' && (
+        <div className="logo-container">
+          <p className="mr-2">Score: {score}</p>
+          <p>Top Score: {topScore}</p>
+        </div>
+      )}
+    </div>
+  )
+}
+
+export default Navbar
+
+
+// Write your code here.
+import './index.css'
+
+const EmojiCard = props => {
+  const {emoji, onEmojiClicked} = props
+  const onClickOfEmoji = () => {
+    onEmojiClicked(emoji.id)
+  }
+  return (
+    <li className="card-container" onClick={onClickOfEmoji}>
+      <button type="button">
+        <img src={emoji.emojiUrl} alt={emoji.emojiName} />
+      </button>
+    </li>
+  )
+}
+
+export default EmojiCard
+
+
+// Write your code here.
+
+const WinOrLoseCard = props => {
+  const {isGameWon, onResetGame} = props
+  const result = isGameWon ? 'Won' : 'Lose'
+  const imgUrl = isGameWon
+    ? 'https://assets.ccbp.in/frontend/react-js/won-game-img.png'
+    : 'https://assets.ccbp.in/frontend/react-js/lose-game-img.png'
+  const onPlayAgainClicked = () => {
+    onResetGame()
+  }
+  return (
+    <div className="win-lose-background-container">
+      <div className="win-lose-result-container">
+        <h1>You {result}</h1>
+        {isGameWon && <p>Best Score</p>}
+        {isGameWon && <p>12/12</p>}
+        {isGameWon === false && <p>Score</p>}
+        <button type="button" onClick={onPlayAgainClicked}>
+          Play Again
+        </button>
+      </div>
+      <img src={imgUrl} alt="win or lose" />
+    </div>
+  )
+}
+
+export default WinOrLoseCard
