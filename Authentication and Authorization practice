@@ -1,0 +1,161 @@
+import {Switch, Route, BrowserRouter} from 'react-router-dom'
+import Home from './components/Home/index'
+import About from './components/About/index'
+import Login from './components/Login/index'
+import ProtectedRoute from './components/ProtectedRoute/index'
+import NotFound from './components/NotFound/index'
+
+const App = () => (
+<BrowserRouter>
+  <Switch>
+    <Route exact path="/login" component={Login} />
+    <ProtectedRoute exact path="/" component={Home} />
+    <ProtectedRoute exact path="/about" component={About} />
+    <Route component={NotFound} />
+  </Switch>
+</BrowserRouter>
+)
+
+export default App
+
+import {Redirect, Route} from 'react-router-dom'
+import Cookies from 'js-cookie'
+
+const ProtectedRoute = props => {
+  const jwtToken = Cookies.get('jwt_token')
+  if (jwtToken === undefined) {
+    return <Redirect to="/login" />
+  }
+  return <Route {...props} />
+}
+
+export default ProtectedRoute
+
+
+import Cookies from 'js-cookie'
+import {Redirect} from 'react-router-dom'
+
+const Login = props => {
+  const {history} = props
+
+  const jwtToken = Cookies.get('jwt_token')
+  if (jwtToken !== undefined) {
+    return <Redirect to="/" />
+  }
+
+  const onLoginButtonClicked = async () => {
+    const userDetails = {
+      username: 'rahul',
+      password: 'rahul@2021',
+    }
+    const url = 'https://apis.ccbp.in/login'
+    const options = {
+      method: 'POST',
+      body: JSON.stringify(userDetails),
+    }
+
+    const response = await fetch(url, options)
+    const data = await response.json()
+    Cookies.set('jwt_token', data.jwt_token, {expires: 30})
+    history.replace('/')
+  }
+  return (
+    <div>
+      <h1>Please Login</h1>
+      <button type="button" onClick={onLoginButtonClicked}>
+        Login with Sample Creds
+      </button>
+    </div>
+  )
+}
+
+export default Login
+
+
+
+import Header from '../Header/index'
+import LogoutButton from '../LogoutButton/index'
+
+const Home = () => (
+  <>
+    <Header />
+    <h1>Home Route</h1>
+    <LogoutButton />
+  </>
+)
+
+export default Home
+
+
+
+import {Link} from 'react-router-dom'
+
+const Header = () => (
+  <div>
+    <ul>
+      <Link to="/">
+        <li>Home</li>
+      </Link>
+      <Link to="/about">
+        <li>About</li>
+      </Link>
+    </ul>
+  </div>
+)
+
+export default Header
+
+
+import {withRouter} from 'react-router-dom'
+import Cookies from 'js-cookie'
+
+const LogoutButton = props => {
+  const {history} = props
+  const onLogoutButtonClicked = () => {
+    Cookies.remove('jwt_token')
+    history.replace('/login')
+  }
+  return (
+    <>
+      <button type="button" onClick={onLogoutButtonClicked}>
+        Logout
+      </button>
+    </>
+  )
+}
+
+export default withRouter(LogoutButton)
+
+
+import Header from '../Header/index'
+import LogoutButton from '../LogoutButton/index'
+
+const Home = () => (
+  <>
+    <Header />
+    <h1>Home Route</h1>
+    <LogoutButton />
+  </>
+)
+
+export default Home
+
+
+import Header from '../Header/index'
+import LogoutButton from '../LogoutButton/index'
+
+const About = () => (
+  <>
+    <Header />
+    <h1>About Route</h1>
+    <LogoutButton />
+  </>
+)
+
+export default About
+
+
+const NotFound = () => <h1>Not Found</h1>
+
+export default NotFound
+
