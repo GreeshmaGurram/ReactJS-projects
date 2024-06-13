@@ -1,0 +1,186 @@
+import './App.css'
+
+import GithubPopularRepos from './components/GithubPopularRepos'
+
+const App = () => <GithubPopularRepos />
+
+export default App
+
+
+import {Component} from 'react'
+import Loader from 'react-loader-spinner'
+
+import RepositoryItem from '../RepositoryItem/index'
+import LanguageFilterItem from '../LanguageFilterItem/index'
+import './index.css'
+
+const languageFiltersData = [
+  {id: 'ALL', language: 'All'},
+  {id: 'JAVASCRIPT', language: 'Javascript'},
+  {id: 'RUBY', language: 'Ruby'},
+  {id: 'JAVA', language: 'Java'},
+  {id: 'CSS', language: 'CSS'},
+]
+
+export default class GithubPopularRepos extends Component {
+  state = {
+    activeFilterLanguage: languageFiltersData[0].id,
+    apiStatus: '',
+    reposList: [],
+  }
+
+  componentDidMount() {
+    this.getReposList()
+  }
+
+  getReposList = async () => {
+    this.setState({apiStatus: 'loading'})
+    const {activeFilterLanguage} = this.state
+    const githubReposApiUrl = `https://apis.ccbp.in/popular-repos?language=${activeFilterLanguage}`
+    const response = await fetch(githubReposApiUrl)
+    const data = await response.json()
+    if (response.status === 200) {
+      const formattedData = data.popular_repos.map(each => ({
+        name: each.name,
+        id: each.id,
+        issuesCount: each.issues_count,
+        forksCount: each.forks_count,
+        starsCount: each.stars_count,
+        avatarUrl: each.avatar_url,
+      }))
+
+      this.setState({apiStatus: 'success', reposList: formattedData})
+    } else {
+      this.setState({apiStatus: 'failure'})
+    }
+  }
+
+  onLanguageFilterChanged = activeFilterLanguage => {
+    this.setState({activeFilterLanguage}, this.getReposList)
+  }
+
+  renderLoader = () => (
+    <div className="products-loader-container" data-testid="loader">
+      <Loader type="ThreeDots" color="#0b69ff" height="50" width="50" />
+    </div>
+  )
+
+  renderFailureView = () => (
+    <div>
+      <img
+        src="https://assets.ccbp.in/frontend/react-js/api-failure-view.png"
+        alt="failure view"
+      />
+      <h1>Something Went Wrong</h1>
+    </div>
+  )
+
+  renderRepoItemsList = () => {
+    const {reposList} = this.state
+    return (
+      <ul className="repos-item-container">
+        {reposList.map(repo => (
+          <RepositoryItem key={repo.id} repo={repo} />
+        ))}
+      </ul>
+    )
+  }
+
+  renderRepoItems = () => {
+    const {apiStatus} = this.state
+    switch (apiStatus) {
+      case 'loading':
+        return this.renderLoader()
+      case 'success':
+        return this.renderRepoItemsList()
+      case 'failure':
+        return this.renderFailureView()
+      default:
+        return null
+    }
+  }
+
+  render() {
+    const {activeFilterLanguage} = this.state
+    return (
+      <div className="background-container">
+        <h1>Popular</h1>
+        <ul className="nav-bar">
+          {languageFiltersData.map(eachLanguage => (
+            <LanguageFilterItem
+              key={eachLanguage.id}
+              language={eachLanguage}
+              activeFilterLanguage={activeFilterLanguage}
+              onLanguageFilterChanged={this.onLanguageFilterChanged}
+            />
+          ))}
+        </ul>
+        {this.renderRepoItems()}
+      </div>
+    )
+  }
+}
+
+
+
+import './index.css'
+
+const LanguageFilterItem = props => {
+  const {language, activeFilterLanguage, onLanguageFilterChanged} = props
+  const onLanguageClicked = () => {
+    onLanguageFilterChanged(language.id)
+  }
+
+  const activeLanguageClassName =
+    activeFilterLanguage === language.id ? 'active-tab' : ''
+  return (
+    <li
+      onClick={onLanguageClicked}
+      className={`item ${activeLanguageClassName}`}
+    >
+      <button type="button">{language.language}</button>
+    </li>
+  )
+}
+
+export default LanguageFilterItem
+
+
+import './index.css'
+
+const RepositoryItem = props => {
+  const {repo} = props
+
+  return (
+    <li className="repo-list-item">
+      <img src={repo.avatarUrl} alt={repo.name} className="repo-item-img" />
+      <p>{repo.name}</p>
+      <div>
+        <img
+          src="https://assets.ccbp.in/frontend/react-js/stars-count-img.png"
+          alt="stars"
+          className="repo-counts-img"
+        />
+        <p>{repo.starsCount}</p>
+      </div>
+      <div>
+        <img
+          src="https://assets.ccbp.in/frontend/react-js/forks-count-img.png"
+          alt="forks"
+          className="repo-counts-img"
+        />
+        <p>{repo.forksCount}</p>
+      </div>
+      <div>
+        <img
+          src="https://assets.ccbp.in/frontend/react-js/issues-count-img.png"
+          alt="open issues"
+          className="repo-counts-img"
+        />
+        <p>{repo.issuesCount}</p>
+      </div>
+    </li>
+  )
+}
+
+export default RepositoryItem
