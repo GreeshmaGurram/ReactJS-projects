@@ -1,0 +1,78 @@
+import AlertNotifications from './components/AlertNotifications'
+
+import './App.css'
+
+const App = () => <AlertNotifications />
+
+export default App
+
+
+import {AiFillCheckCircle} from 'react-icons/ai'
+import {RiErrorWarningFill} from 'react-icons/ri'
+import {MdWarning} from 'react-icons/md'
+import {MdInfo} from 'react-icons/md'
+
+import Notification from '../Notification/index'
+
+import './index.css'
+
+const AlertNotifications = () => (
+  <div className="main-container">
+    <h1>Alert Notifications</h1>
+    <Notification>
+      <>
+        <AiFillCheckCircle />
+        <div>
+          <h3>Success</h3>
+          <p>You can access all the files in the folder</p>
+        </div>
+      </>
+    </Notification>
+    <Notification>
+      <>
+        <RiErrorWarningFill />
+        <div>
+          <h3>Error</h3>
+          <p>Sorry, you are not authorized to have access to delete the file</p>
+        </div>
+      </>
+    </Notification>
+    <Notification>
+      <>
+        <MdWarning />
+        <div>
+          <h3>Warning</h3>
+          <p>Viewers of this file can see comments and suggestions</p>
+        </div>
+      </>
+    </Notification>
+    <Notification>
+      <>
+        <MdInfo />
+        <div>
+          <h3>Info</h3>
+          <p>Anyone on the internet can view these files</p>
+        </div>
+      </>
+    </Notification>
+  </div>
+)
+
+export default AlertNotifications
+
+
+
+import {GrFormClose} from 'react-icons/gr'
+import './index.css'
+
+const Notification = props => {
+  const {children} = props
+  return (
+    <div className="notification-container">
+      {children}
+      <GrFormClose />
+    </div>
+  )
+}
+
+export default Notification
