@@ -1,0 +1,206 @@
+import {Component} from 'react'
+
+import ConfigurationController from './components/ConfigurationController'
+
+import Layout from './components/Layout'
+
+import './App.css'
+import ConfigurationContext from './context/ConfigurationContext'
+
+class App extends Component {
+  state = {
+    showContent: true,
+    showLeftNavbar: true,
+    showRightNavbar: true,
+  }
+
+  onToggleShowContent = () => {
+    this.setState(prevState => ({showContent: !prevState.showContent}))
+  }
+
+  onToggleShowLeftNavbar = () => {
+    this.setState(prevState => ({showLeftNavbar: !prevState.showLeftNavbar}))
+  }
+
+  onToggleShowRightNavbar = () => {
+    this.setState(prevState => ({showRightNavbar: !prevState.showRightNavbar}))
+  }
+
+  render() {
+    const {showContent, showLeftNavbar, showRightNavbar} = this.state
+
+    return (
+      <ConfigurationContext.Provider
+        value={{
+          showContent,
+          showLeftNavbar,
+          showRightNavbar,
+          onToggleShowContent: this.onToggleShowContent,
+          onToggleShowLeftNavbar: this.onToggleShowLeftNavbar,
+          onToggleShowRightNavbar: this.onToggleShowRightNavbar,
+        }}
+      >
+        <div>
+          <ConfigurationController />
+          <Layout />
+        </div>
+      </ConfigurationContext.Provider>
+    )
+  }
+}
+
+export default App
+
+
+import React from 'react'
+
+const ConfigurationContext = React.createContext({
+  showContent: true,
+  showLeftNavbar: true,
+  showRightNavbar: true,
+  onToggleShowContent: () => {},
+  onToggleShowLeftNavbar: () => {},
+  onToggleShowRightNavbar: () => {},
+})
+
+export default ConfigurationContext
+
+
+import './index.css'
+import ConfigurationContext from '../../context/ConfigurationContext'
+
+const ConfigurationController = () => (
+  <ConfigurationContext.Consumer>
+    {value => {
+      const {
+        showContent,
+        showLeftNavbar,
+        showRightNavbar,
+        onToggleShowContent,
+        onToggleShowLeftNavbar,
+        onToggleShowRightNavbar,
+      } = value
+
+      return (
+        <div className="background-container">
+          <h1>Layout</h1>
+          <div>
+            <input
+              type="checkbox"
+              id="content"
+              checked={showContent ? 'yes' : ''}
+              onChange={onToggleShowContent}
+            />
+            <label htmlFor="content">Content</label>
+          </div>
+          <div>
+            <input
+              type="checkbox"
+              id="leftNavbar"
+              checked={showLeftNavbar ? 'yes' : ''}
+              onChange={onToggleShowLeftNavbar}
+            />
+            <label htmlFor="leftNavbar">Left Navbar</label>
+          </div>
+          <div>
+            <input
+              type="checkbox"
+              id="rightNavbar"
+              checked={showRightNavbar ? 'yes' : ''}
+              onChange={onToggleShowRightNavbar}
+            />
+            <label htmlFor="rightNavbar">Right Navbar</label>
+          </div>
+        </div>
+      )
+    }}
+  </ConfigurationContext.Consumer>
+)
+
+export default ConfigurationController
+
+
+
+import Header from '../Header/index'
+import Body from '../Body/index'
+import Footer from '../Footer/index'
+import './index.css'
+
+const Layout = () => (
+  <div className="layout-container">
+    <div>
+      <Header />
+      <Body />
+      <Footer />
+    </div>
+  </div>
+)
+
+export default Layout
+
+
+
+import './index.css'
+
+const Header = () => (
+  <div className="header-container">
+    <h1>Header</h1>
+  </div>
+)
+
+export default Header
+
+
+import './index.css'
+import ConfigurationContext from '../../context/ConfigurationContext'
+
+const Body = () => (
+  <ConfigurationContext.Consumer>
+    {value => {
+      const {showContent, showLeftNavbar, showRightNavbar} = value
+      return (
+        <div className="body-container">
+          {showLeftNavbar && (
+            <div className="left-nav-container">
+              <h2>Left Navbar Menu</h2>
+              <ul>
+                <li>Item 1</li>
+                <li>Item 2</li>
+                <li>Item 3</li>
+                <li>Item 4</li>
+              </ul>
+            </div>
+          )}
+          {showContent && (
+            <div className="content-container">
+              <h3>Content</h3>
+              <p>
+                Lorem ipsum Some random text to display as content in the div
+              </p>
+            </div>
+          )}
+          {showRightNavbar && (
+            <div className="left-nav-container">
+              <h2>Right Navbar </h2>
+              <p>Ad 1</p>
+              <p>Ad 2</p>
+            </div>
+          )}
+        </div>
+      )
+    }}
+  </ConfigurationContext.Consumer>
+)
+
+export default Body
+
+
+import './index.css'
+
+const Footer = () => (
+  <div className="footer-container">
+    <h1>Footer</h1>
+  </div>
+)
+
+export default Footer
