@@ -1,0 +1,200 @@
+import {Switch, Route} from 'react-router-dom'
+
+import {Component} from 'react'
+
+import Home from './components/Home'
+
+import About from './components/About'
+
+import NotFound from './components/NotFound'
+
+import './App.css'
+import ThemeContext from './context/ThemeContext'
+
+class App extends Component {
+  state = {
+    isDarkTheme: false,
+  }
+
+  onThemeChanged = () => {
+    this.setState(prevState => ({isDarkTheme: !prevState.isDarkTheme}))
+  }
+
+  render() {
+    const {isDarkTheme} = this.state
+    return (
+      <ThemeContext.Provider
+        value={{
+          isDarkTheme,
+          toggleTheme: this.onThemeChanged,
+        }}
+      >
+        <Switch>
+          <Route exact path="/" component={Home} />
+          <Route exact path="/about" component={About} />
+          <Route component={NotFound} />
+        </Switch>
+      </ThemeContext.Provider>
+    )
+  }
+}
+
+export default App
+
+  import React from 'react'
+
+const ThemeContext = React.createContext({
+  isDarkTheme: false,
+  toggleTheme: () => {},
+})
+
+export default ThemeContext
+
+
+
+import Navbar from '../Navbar/index'
+import ThemeContext from '../../context/ThemeContext'
+import './index.css'
+
+const Home = () => (
+  <div>
+    <Navbar />
+    <ThemeContext.Consumer>
+      {value => {
+        const {isDarkTheme} = value
+        const homeImgurl = isDarkTheme
+          ? 'https://assets.ccbp.in/frontend/react-js/home-dark-img.png'
+          : 'https://assets.ccbp.in/frontend/react-js/home-light-img.png'
+        const homeContainerClassName = isDarkTheme
+          ? 'home-container dark-theme-home'
+          : 'home-container light-theme-home'
+        return (
+          <div className={homeContainerClassName}>
+            <img src={homeImgurl} alt="home" />
+            <h1>Home</h1>
+          </div>
+        )
+      }}
+    </ThemeContext.Consumer>
+  </div>
+)
+
+export default Home
+
+
+
+import {Link} from 'react-router-dom'
+
+import ThemeContext from '../../context/ThemeContext'
+
+import './index.css'
+
+const Navbar = () => (
+  <ThemeContext.Consumer>
+    {value => {
+      const {isDarkTheme, toggleTheme} = value
+      const websiteLogoUrl = isDarkTheme
+        ? 'https://assets.ccbp.in/frontend/react-js/website-logo-dark-theme-img.png'
+        : 'https://assets.ccbp.in/frontend/react-js/website-logo-light-theme-img.png'
+      const themeUrl = isDarkTheme
+        ? 'https://assets.ccbp.in/frontend/react-js/light-theme-img.png'
+        : 'https://assets.ccbp.in/frontend/react-js/dark-theme-img.png'
+      const mainHeadingClassName = isDarkTheme
+        ? 'navbar-container dark-theme'
+        : 'navbar-container light-theme'
+      return (
+        <div className={mainHeadingClassName}>
+          <img src={websiteLogoUrl} alt="website logo" className="logo-img" />
+          <ul className="listed-link">
+            <Link to="/">
+              <li className="listed-link-item">Home</li>
+            </Link>
+            <Link to="/about">
+              <li className="listed-link-item">About</li>
+            </Link>
+          </ul>
+          <button
+            type="button"
+            data-testid="theme"
+            className="button"
+            onClick={toggleTheme}
+          >
+            <img src={themeUrl} alt="theme" className="logo-img" />
+          </button>
+        </div>
+      )
+    }}
+  </ThemeContext.Consumer>
+)
+
+export default Navbar
+
+
+
+import Navbar from '../Navbar/index'
+import ThemeContext from '../../context/ThemeContext'
+import './index.css'
+
+const About = () => (
+  <div>
+    <Navbar />
+    <ThemeContext.Consumer>
+      {value => {
+        const {isDarkTheme} = value
+        const aboutImgurl = isDarkTheme
+          ? 'https://assets.ccbp.in/frontend/react-js/about-dark-img.png'
+          : 'https://assets.ccbp.in/frontend/react-js/about-light-img.png'
+        const aboutContainerClassName = isDarkTheme
+          ? 'about-container dark-theme-about'
+          : 'about-container light-theme-about'
+        return (
+          <div className={aboutContainerClassName}>
+            <img src={aboutImgurl} alt="about" className="about-img" />
+            <h1>About</h1>
+          </div>
+        )
+      }}
+    </ThemeContext.Consumer>
+  </div>
+)
+
+export default About
+
+
+
+import ThemeContext from '../../context/ThemeContext'
+import Navbar from '../Navbar/index'
+
+import './index.css'
+
+const NotFound = () => (
+  <div>
+    <Navbar />
+    <ThemeContext.Consumer>
+      {value => {
+        const {isDarkTheme} = value
+        const notFoundContainerClassName = isDarkTheme
+          ? 'not-container dark-theme-not'
+          : 'not-container light-theme-not'
+        return (
+          <div className={notFoundContainerClassName}>
+            <img
+              src="https://assets.ccbp.in/frontend/react-js/not-found-img.png"
+              alt="not found"
+              className="img-not-found"
+            />
+            <h3>Lost your way?</h3>
+            <p>We cannot seem to find the page you are looking for</p>
+          </div>
+        )
+      }}
+    </ThemeContext.Consumer>
+  </div>
+)
+
+export default NotFound
+
+
+
+
+  
