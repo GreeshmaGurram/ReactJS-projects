@@ -1,0 +1,209 @@
+import GradientGenerator from './components/GradientGenerator'
+
+import './App.css'
+
+const App = () => <GradientGenerator />
+
+export default App
+
+
+import {Component} from 'react'
+import GradientDirectionItem from '../GradientDirectionItem/index'
+import {
+  GradientGeneratorDiv,
+  GenerateButton,
+  GradientDirectionItemsList,
+  ColorPickerDiv,
+  ColorPickerInput,
+} from './styledComponents'
+
+const gradientDirectionsList = [
+  {directionId: 'TOP', value: 'top', displayText: 'Top'},
+  {directionId: 'BOTTOM', value: 'bottom', displayText: 'Bottom'},
+  {directionId: 'RIGHT', value: 'right', displayText: 'Right'},
+  {directionId: 'LEFT', value: 'left', displayText: 'Left'},
+]
+
+class GradientGenerator extends Component {
+  state = {
+    colorOne: '#8ae323',
+    colorTwo: '#014f7b',
+    gradientDirection: gradientDirectionsList[0].value,
+    colorOneOnSubmit: '#8ae323',
+    colorTwoOnSubmit: '#014f7b',
+    gradientDirectionOnSubmit: gradientDirectionsList[0].value,
+  }
+
+  onGenerateButtonClicked = () => {
+    const {colorOne, colorTwo, gradientDirection} = this.state
+    this.setState({
+      colorOneOnSubmit: colorOne,
+      colorTwoOnSubmit: colorTwo,
+      gradientDirectionOnSubmit: gradientDirection,
+    })
+  }
+
+  onColorOneChanged = e => {
+    this.setState({colorOne: e.target.value})
+  }
+
+  onColorTwoChanged = e => {
+    this.setState({colorTwo: e.target.value})
+  }
+
+  onGradientDirectionChanged = gradientDirection => {
+    this.setState({gradientDirection})
+  }
+
+  render() {
+    const {
+      colorOne,
+      colorTwo,
+      gradientDirection,
+      colorOneOnSubmit,
+      colorTwoOnSubmit,
+      gradientDirectionOnSubmit,
+    } = this.state
+    return (
+      <GradientGeneratorDiv
+        data-testid="gradientGenerator"
+        gradientDirection={gradientDirectionOnSubmit}
+        colorTwoOnSubmit={colorTwoOnSubmit}
+        colorOneOnSubmit={colorOneOnSubmit}
+      >
+        <h1>Generate a CSS Color Gradient</h1>
+        <p>Choose Direction</p>
+        <GradientDirectionItemsList>
+          {gradientDirectionsList.map(eachDirection => (
+            <GradientDirectionItem
+              onGradientDirectionChanged={this.onGradientDirectionChanged}
+              gradientDirection={gradientDirection}
+              key={eachDirection.directionId}
+              direction={eachDirection}
+            />
+          ))}
+        </GradientDirectionItemsList>
+        <p>Pick the colors</p>
+        <GradientDirectionItemsList as="div">
+          <ColorPickerDiv>
+            <p>{colorOne}</p>
+            <ColorPickerInput
+              type="color"
+              onChange={this.onColorOneChanged}
+              value={colorOne}
+            />
+          </ColorPickerDiv>
+          <ColorPickerDiv>
+            <p>{colorTwo}</p>
+            <ColorPickerInput
+              type="color"
+              onChange={this.onColorTwoChanged}
+              value={colorTwo}
+            />
+          </ColorPickerDiv>
+        </GradientDirectionItemsList>
+        <GenerateButton onClick={this.onGenerateButtonClicked} type="button">
+          Generate
+        </GenerateButton>
+      </GradientGeneratorDiv>
+    )
+  }
+}
+
+export default GradientGenerator
+
+
+import styled from 'styled-components'
+
+export const GradientGeneratorDiv = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  height: 100vh;
+  color: #ffffff;
+  background-image: linear-gradient(
+    to ${props => props.gradientDirection},
+    ${props => props.colorOneOnSubmit},
+    ${props => props.colorTwoOnSubmit}
+  );
+`
+
+export const GradientDirectionItemsList = styled.ul`
+  display: flex;
+  flex-direction: row;
+`
+export const ColorPickerDiv = styled.div`
+  margin-right: 30px;
+`
+export const ColorPickerInput = styled.input`
+  border: 0;
+  background-color: transparent;
+  height: 40px;
+  width: 110px;
+`
+
+export const GenerateButton = styled.button`
+  border: 0;
+  border-radius: 10px;
+  margin-top: 20px;
+  background-color: #00c9b7;
+  color: #1e293b;
+  height: 35px;
+  width: 90px;
+  font-weight: bold;
+  text-align: center;
+  cursor: pointer;
+`
+
+
+
+import {GradientDirectionLi, GradientDirectionButton} from './styledComponents'
+
+const GradientDirectionItem = props => {
+  const {direction, onGradientDirectionChanged, gradientDirection} = props
+
+  const onDirectionClicked = () => {
+    onGradientDirectionChanged(direction.value)
+  }
+
+  return (
+    <GradientDirectionLi active={gradientDirection === direction.value}>
+      <GradientDirectionButton
+        active={gradientDirection === direction.value}
+        type="button"
+        onClick={onDirectionClicked}
+      >
+        {direction.displayText}
+      </GradientDirectionButton>
+    </GradientDirectionLi>
+  )
+}
+
+export default GradientDirectionItem
+
+
+
+import styled from 'styled-components'
+
+export const GradientDirectionLi = styled.li`
+  list-style-type: none;
+  background-color: white;
+  color: black;
+  height: 35px;
+  width: 90px;
+  margin-right: 20px;
+  border-radius: 6px;
+  opacity: ${props => (props.active ? 1 : 0.5)};
+`
+
+export const GradientDirectionButton = styled.button`
+  border: 0;
+  opacity: ${props => (props.active ? 1 : 0.5)};
+  border-radius: 6px;
+  background-color: transparent;
+  padding: 10px;
+  font-weight: bold;
+  cursor: pointer;
+`
