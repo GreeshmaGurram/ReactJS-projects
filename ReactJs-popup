@@ -1,0 +1,163 @@
+import {Route, Switch, Redirect} from 'react-router-dom'
+
+import Home from './components/Home'
+import About from './components/About'
+import NotFound from './components/NotFound'
+
+import './App.css'
+
+const App = () => (
+  <Switch>
+    <Route exact path="/" component={Home} />
+    <Route exact path="/about" component={About} />
+    <Route exact path="/not-found" component={NotFound} />
+    <Redirect to="not-found" />
+  </Switch>
+)
+
+export default App
+
+
+import Header from '../Header'
+
+import './index.css'
+
+const Home = () => (
+  <div className="home-container">
+    <Header />
+    <div className="home-image-container">
+      <img
+        className="mobile-home-image"
+        src="https://assets.ccbp.in/frontend/react-js/home-sm-img.png"
+        alt="home"
+      />
+      <img
+        className="desktop-home-image"
+        src="https://assets.ccbp.in/frontend/react-js/home-lg-img.png"
+        alt="home"
+      />
+    </div>
+  </div>
+)
+
+export default Home
+
+
+
+import Popup from 'reactjs-popup'
+import {withRouter, Link} from 'react-router-dom'
+import {GiHamburgerMenu} from 'react-icons/gi'
+import {IoMdClose} from 'react-icons/io'
+import {AiFillHome} from 'react-icons/ai'
+import {BsInfoCircleFill} from 'react-icons/bs'
+
+import './index.css'
+
+const Header = () => (
+  <div className="nav-header">
+    <div className="nav-content">
+      <Link to="/">
+        <img
+          className="website-logo"
+          src="https://assets.ccbp.in/frontend/react-js/hamburger-menu-website-logo.png"
+          alt="website logo"
+        />
+      </Link>
+      <Popup
+        modal
+        trigger={
+          <button
+            className="hamburger-icon-button"
+            type="button"
+            data-testid="hamburgerIconButton"
+          >
+            <GiHamburgerMenu size="30" />
+          </button>
+        }
+        className="popup-content"
+      >
+        {close => (
+          <div className="modal-container">
+            <button
+              className="close-button"
+              type="button"
+              data-testid="closeButton"
+              onClick={() => close()}
+            >
+              <IoMdClose size="30" color="#616e7c" />
+            </button>
+            <ul className="nav-links-list">
+              <li className="nav-link-item">
+                <Link className="nav-link" to="/" onClick={() => close()}>
+                  <AiFillHome size="36" />
+                  <p className="nav-link-content">Home</p>
+                </Link>
+              </li>
+              <li className="nav-link-item">
+                <Link className="nav-link" to="/about" onClick={() => close()}>
+                  <BsInfoCircleFill size="32" />
+                  <p className="nav-link-content">About</p>
+                </Link>
+              </li>
+            </ul>
+          </div>
+        )}
+      </Popup>
+    </div>
+  </div>
+)
+
+export default withRouter(Header)
+
+
+
+import Header from '../Header'
+
+import './index.css'
+
+const About = () => (
+  <div className="about-container">
+    <Header />
+    <div className="about-image-container">
+      <img
+        className="mobile-about-image"
+        src="https://assets.ccbp.in/frontend/react-js/about-sm-img.png"
+        alt="About"
+      />
+      <img
+        className="desktop-about-image"
+        src="https://assets.ccbp.in/frontend/react-js/about-lg-img.png"
+        alt="About"
+      />
+    </div>
+  </div>
+)
+
+export default About
+
+
+
+
+import Header from '../Header'
+
+import './index.css'
+
+const About = () => (
+  <div className="about-container">
+    <Header />
+    <div className="about-image-container">
+      <img
+        className="mobile-about-image"
+        src="https://assets.ccbp.in/frontend/react-js/about-sm-img.png"
+        alt="About"
+      />
+      <img
+        className="desktop-about-image"
+        src="https://assets.ccbp.in/frontend/react-js/about-lg-img.png"
+        alt="About"
+      />
+    </div>
+  </div>
+)
+
+export default About
