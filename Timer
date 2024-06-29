@@ -1,0 +1,116 @@
+import {Component} from 'react'
+
+export default class Stopwatch extends Component {
+  state = {
+    timeInSeconds: 0,
+  }
+
+  incrementTime = () => {
+    this.setState(prevState => ({timeInSeconds: prevState.timeInSeconds + 1}))
+  }
+
+  onStartButtonClicked = () => {
+    this.interval = setInterval(this.incrementTime, 1000)
+  }
+
+  onStopButtonClicked = () => {
+    clearInterval(this.interval)
+  }
+
+  onResetButtonClicked = () => {
+    clearInterval(this.interval)
+    this.setState({timeInSeconds: 0})
+  }
+
+  timerToDisplay = () => {
+    const {timeInSeconds} = this.state
+    const timeInMinutes = Math.floor(timeInSeconds / 60)
+    const timerInSeconds = Math.floor(timeInSeconds % 60)
+    const resultantMins =
+      timeInMinutes > 9 ? `${timeInMinutes}` : `0${timeInMinutes}`
+    const resultantSecs =
+      timerInSeconds > 9 ? `${timerInSeconds}` : `0${timerInSeconds}`
+    return `${resultantMins} : ${resultantSecs}`
+  }
+
+  render() {
+    return (
+      <div>
+        <h1>Stopwatch</h1>
+        <div>
+          <div>
+            <img
+              src="https://assets.ccbp.in/frontend/react-js/stopwatch-timer.png"
+              alt="stopwatch"
+            />
+            <h4>Timer</h4>
+          </div>
+          <h2>{this.timerToDisplay()}</h2>
+          <div>
+            <button type="button" onClick={this.onStartButtonClicked}>
+              Start
+            </button>
+            <button type="button" onClick={this.onStopButtonClicked}>
+              Stop
+            </button>
+            <button type="button" onClick={this.onResetButtonClicked}>
+              Reset
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+}
+
+
+functional Components
+
+import {useState} from 'react'
+
+const HookIndex = () => {
+  const [timeInSeconds, setTimeInSeconds] = useState(0)
+  const [intervalId, setIntervalId] = useState()
+  const incrementTimer = () => {
+    setTimeInSeconds(ts => ts + 1)
+  }
+  const onStartButtonClicked = () => {
+    const interval = setInterval(incrementTimer, 1000)
+    setIntervalId(interval)
+  }
+
+  const onStopButtonClicked = () => {
+    clearInterval(intervalId)
+  }
+
+  const onResetButtonClicked = () => {
+    setTimeInSeconds(0)
+    clearInterval(intervalId)
+  }
+
+  return (
+    <div>
+      <h1>Stopwatch</h1>
+      <div>
+        <div>
+          <img alt="stopwatch" />
+          <h4>Timer</h4>
+        </div>
+        <h3>{timeInSeconds}</h3>
+        <div>
+          <button type="button" onClick={onStartButtonClicked}>
+            Start
+          </button>
+          <button type="button" onClick={onStopButtonClicked}>
+            Stop
+          </button>
+          <button type="button" onClick={onResetButtonClicked}>
+            Reset
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default HookIndex
