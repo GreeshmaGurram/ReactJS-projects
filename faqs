@@ -1,0 +1,128 @@
+Class Components
+import {Component} from 'react'
+import FaqItem from '../FaqItem/index'
+
+export default class Faqs extends Component {
+  render() {
+    const {faqsList} = this.props
+    return (
+      <div>
+        <div>
+          <h1>FAQs</h1>
+          <ul>
+            {faqsList.map(faq => (
+              <FaqItem key={faq.id} faq={faq} />
+            ))}
+          </ul>
+        </div>
+      </div>
+    )
+  }
+}
+
+
+import {Component} from 'react'
+
+export default class FaqItem extends Component {
+  state = {
+    isAnswerNotVisible: true,
+  }
+
+  onPlusClicked = () => {
+    this.setState(prevState => ({
+      isAnswerNotVisible: !prevState.isAnswerNotVisible,
+    }))
+  }
+
+  render() {
+    const {faq} = this.props
+    const {isAnswerNotVisible} = this.state
+    return (
+      <li>
+        <div>
+          <h3>{faq.questionText}</h3>
+          {isAnswerNotVisible ? (
+            <img
+              onClick={this.onPlusClicked}
+              src="https://assets.ccbp.in/frontend/react-js/faqs-plus-icon-img.png"
+              alt="plus"
+            />
+          ) : (
+            <img
+              onClick={this.onPlusClicked}
+              src="https://assets.ccbp.in/frontend/react-js/faqs-minus-icon-img.png"
+              alt="minus"
+            />
+          )}
+        </div>
+        {!isAnswerNotVisible && (
+          <div>
+            <hr />
+            <p>{faq.answerText}</p>
+          </div>
+        )}
+      </li>
+    )
+  }
+}
+
+
+
+Functional Components
+
+import FaqItem from '../FaqItem/HookIndex'
+
+const Faqs = ({faqsList}) => (
+  <div>
+    <div>
+      <h1>FAQs</h1>
+      <ul>
+        {faqsList.map(faq => (
+          <FaqItem key={faq.id} faq={faq} />
+        ))}
+      </ul>
+    </div>
+  </div>
+)
+
+export default Faqs
+
+
+
+import {useState} from 'react'
+
+const FaqItem = ({faq}) => {
+  const [isAnswerNotVisible, setIsAnswerNotVisible] = useState(true)
+
+  const onPlusClicked = () => {
+    setIsAnswerNotVisible(ps => !ps)
+  }
+  return (
+    <li>
+      <div>
+        <h3>{faq.questionText}</h3>
+        {isAnswerNotVisible ? (
+          <img
+            onClick={onPlusClicked}
+            src="https://assets.ccbp.in/frontend/react-js/faqs-plus-icon-img.png"
+            alt="plus"
+          />
+        ) : (
+          <img
+            onClick={onPlusClicked}
+            src="https://assets.ccbp.in/frontend/react-js/faqs-minus-icon-img.png"
+            alt="minus"
+          />
+        )}
+      </div>
+      {!isAnswerNotVisible && (
+        <div>
+          <hr />
+          <p>{faq.answerText}</p>
+        </div>
+      )}
+    </li>
+  )
+}
+
+export default FaqItem
