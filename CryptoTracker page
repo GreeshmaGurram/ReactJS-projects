@@ -1,0 +1,133 @@
+import CryptocurrencyTracker from './components/CryptocurrencyTracker'
+
+import './App.css'
+
+const App = () => <CryptocurrencyTracker />
+
+export default App
+
+
+
+import CryptocurrenciesList from '../CryptocurrenciesList/index'
+import './index.css'
+
+const CryptocurrencyTracker = () => (
+  <div className="background-container">
+    <CryptocurrenciesList />
+  </div>
+)
+
+export default CryptocurrencyTracker
+
+
+
+import {Component} from 'react'
+import Loader from 'react-loader-spinner'
+import CryptocurrencyItem from '../CryptocurrencyItem/index'
+
+import './index.css'
+
+export default class CryptocurrenciesList extends Component {
+  state = {
+    fetchStatus: 'INITIAL',
+    currencyList: [],
+  }
+
+  componentDidMount() {
+    this.fetchCurrencyList()
+  }
+
+  fetchCurrencyList = async () => {
+    this.setState({fetchStatus: 'LOADING'})
+    const cryptocurrenciesApiUrl =
+      'https://apis.ccbp.in/crypto-currency-converter'
+    const response = await fetch(cryptocurrenciesApiUrl)
+    const data = await response.json()
+    const formattedData = data.map(each => ({
+      currencyName: each.currency_name,
+      usdValue: each.usd_value,
+      euroValue: each.euro_value,
+      id: each.id,
+      currencyLogo: each.currency_logo,
+    }))
+    this.setState({
+      fetchStatus: 'SUCCESS',
+      currencyList: formattedData,
+    })
+  }
+
+  renderView = () => {
+    const {fetchStatus} = this.state
+
+    return fetchStatus === 'LOADING'
+      ? this.renderLoaderView()
+      : this.renderDefaultView()
+  }
+
+  renderLoaderView = () => (
+    <div data-testid="loader" className="loader-container">
+      <Loader type="Rings" color="#ffffff" height={80} width={80} />
+    </div>
+  )
+
+  renderSuccessView = () => {
+    const {currencyList} = this.state
+    return (
+      <ul>
+        {currencyList.map(each => (
+          <CryptocurrencyItem key={each.id} currency={each} />
+        ))}
+      </ul>
+    )
+  }
+
+  renderDefaultView = () => (
+    <div className="main-container">
+      <h1>Cryptocurrency Tracker</h1>
+      <img
+        src="https://assets.ccbp.in/frontend/react-js/cryptocurrency-bg.png"
+        alt="cryptocurrency"
+      />
+      <div className="currency-table">
+        <div className="table-header">
+          <h3>Coin Type</h3>
+          <div className="currency-headers">
+            <h3>USD</h3>
+            <h3 className="currency-heading">EURO</h3>
+          </div>
+        </div>
+        {this.renderSuccessView()}
+      </div>
+    </div>
+  )
+
+  render() {
+    return this.renderView()
+  }
+}
+
+
+
+import './index.css'
+
+const CryptocurrencyItem = ({currency}) => (
+  <li className="currency-item-container">
+    <div className="currency-sub">
+      <img
+        src={currency.currencyLogo}
+        alt={currency.currencyName}
+        className="logo"
+      />
+      <p>{currency.currencyName}</p>
+    </div>
+    <div className="currency-sub">
+      <p className="currency">{currency.usdValue}</p>
+      <p>{currency.euroValue}</p>
+    </div>
+  </li>
+)
+
+export default CryptocurrencyItem
+
+
+
